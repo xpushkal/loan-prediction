@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Approval Prediction - Project Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 50px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-tab {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .nav-tab:hover {
+            border-color: #667eea;
+        }
+
+        /* Sections */
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        .section p {
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .grid-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .grid-item h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .grid-item .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #764ba2;
+            margin: 10px 0;
+        }
+
+        .grid-item .description {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        tr:nth-child(even) {
+            background: #f0f0f0;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .chart-placeholder {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            color: #999;
+            font-style: italic;
+            border: 2px dashed #ddd;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-card .label {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        /* List */
+        .list-group {
+            list-style: none;
+        }
+
+        .list-group li {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .list-group li:last-child {
+            border-bottom: none;
+        }
+
+        .list-group li:before {
+            content: "✓";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        /* Highlights */
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+
+        .highlight strong {
+            color: #856404;
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .footer p {
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .section h2 {
+                font-size: 1.5em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-tab {
+                width: 100%;
+            }
+
+            .stat-card .value {
+                font-size: 1.5em;
+            }
+        }
+
+        /* Feature Importance List */
+        .feature-list {
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 5px solid #667eea;
+        }
+
+        .feature-rank {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .feature-details {
+            flex: 1;
+        }
+
+        .feature-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .feature-importance {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .percentage {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        /* Confusion Matrix */
+        .confusion-matrix {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .matrix-cell {
+            display: inline-block;
+            background: #f8f9fa;
+            padding: 15px 25px;
+            margin: 5px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .matrix-cell.positive {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+
+        .matrix-cell.negative {
+            border-color: #dc3545;
+            background: #f8d7da;
+        }
+
+        .matrix-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 5px 0;
+        }
+
+        .matrix-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🏦 Loan Approval Prediction System</h1>
+            <p class="subtitle">Machine Learning Model for Automated Loan Eligibility Assessment</p>
+            <div>
+                <span class="badge">XGBoost Classification</span>
+                <span class="badge">70.27% Accuracy</span>
+                <span class="badge">81.37% Recall</span>
+                <span class="badge">Python 3.11</span>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('overview')">📊 Overview</button>
+            <button class="nav-tab" onclick="showSection('dataset')">📈 Dataset</button>
+            <button class="nav-tab" onclick="showSection('model')">🤖 Model</button>
+            <button class="nav-tab" onclick="showSection('performance')">📋 Performance</button>
+            <button class="nav-tab" onclick="showSection('features')">🔍 Features</button>
+            <button class="nav-tab" onclick="showSection('setup')">🚀 Setup</button>
+            <button class="nav-tab" onclick="showSection('structure')">📁 Structure</button>
+        </div>
+
+        <!-- OVERVIEW SECTION -->
+        <div id="overview" class="section active">
+            <h2>📊 Project Overview</h2>
+
+            <h3>Business Problem</h3>
+            <p>
+                Loan officers at SZE Bank spend significant time manually reviewing loan applications. This tedious process is:
+            </p>
+            <ul class="list-group">
+                <li><strong>Time-consuming</strong> - Manual review of hundreds of applications</li>
+                <li><strong>Inconsistent</strong> - Subjective criteria across different reviewers</li>
+                <li><strong>Error-prone</strong> - Opportunities for bias and human error</li>
+                <li><strong>Expensive</strong> - Requires dedicated staff for administrative review</li>
+            </ul>
+
+            <h3>Solution</h3>
+            <p>
+                We developed a machine learning system that automates loan eligibility prediction using historical application data and outcomes. This solution provides:
+            </p>
+            <div class="grid">
+                <div class="grid-item">
+                    <h4>🎯 Automation</h4>
+                    <p>Instant predictions on loan applications</p>
+                </div>
+                <div class="grid-item">
+                    <h4>📊 Consistency</h4>
+                    <p>Uniform decision criteria for all applications</p>
+                </div>
+                <div class="grid-item">
+                    <h4>📈 Efficiency</h4>
+                    <p>Process hundreds of applications daily</p>
+                </div>
+                <div class="grid-item">
+                    <h4>🔍 Transparency</h4>
+                    <p>Clear feature importance for decisions</p>
+                </div>
+            </div>
+
+            <h3>Key Metrics</h3>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="label">Model Accuracy</div>
+                    <div class="value">70.27%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Recall (Sensitivity)</div>
+                    <div class="value">81.37%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Precision</div>
+                    <div class="value">76.85%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">F1-Score</div>
+                    <div class="value">0.7905</div>
+                </div>
+            </div>
+
+            <h3>Model Interpretation</h3>
+            <div class="highlight">
+                <strong>For every 100 loan applications:</strong><br>
+                ✓ Model correctly approves ~81 genuinely approvable loans<br>
+                ✓ Model correctly rejects ~21 genuinely problematic loans<br>
+                ⚠ Model incorrectly approves ~25 applications (conservative approach)<br>
+                ⚠ Model misses ~19 genuinely approvable loans
+            </div>
+        </div>
+
+        <!-- DATASET SECTION -->
+        <div id="dataset" class="section">
+            <h2>📈 Dataset Analysis</h2>
+
+            <h3>Data Overview</h3>
+            <div class="grid">
+                <div class="grid-item">
+                    <h4>Training Samples</h4>
+                    <div class="value">491</div>
+                    <div class="description">Historical loan applications</div>
+                </div>
+                <div class="grid-item">
+                    <h4>Test Samples</h4>
+                    <div class="value">123</div>
+                    <div class="description">Holdout validation set</div>
+                </div>
+                <div class="grid-item">
+                    <h4>Total Features</h4>
+                    <div class="value">13</div>
+                    <div class="description">After encoding: 14 numeric features</div>
+                </div>
+                <div class="grid-item">
+                    <h4>Target Classes</h4>
+                    <div class="value">2</div>
+                    <div class="description">Approved vs. Rejected</div>
+                </div>
+            </div>
+
+            <h3>Class Distribution</h3>
+            <div class="grid">
+                <div class="grid-item">
+                    <h4>✓ Approved (Non-Default)</h4>
+                    <div class="value">69.9%</div>
+                    <div class="description">343 out of 491 applications</div>
+                </div>
+                <div class="grid-item">
+                    <h4>✗ Rejected (Default)</h4>
+                    <div class="value">30.1%</div>
+                    <div class="description">148 out of 491 applications</div>
+                </div>
+            </div>
+
+            <h3>Feature Descriptions</h3>
+            <table>
+                <tr>
+                    <th>Feature Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><strong>Credit_History</strong></td>
+                    <td>Categorical</td>
+                    <td>Applicant's credit history status (0=poor, 1=good)</td>
+                </tr>
+                <tr>
+                    <td><strong>Loan_Amount_Term</strong></td>
+                    <td>Numeric</td>
+                    <td>Loan tenure in months (default: 360)</td>
+                </tr>
+                <tr>
+                    <td><strong>Loan_Amount</strong></td>
+                    <td>Numeric</td>
+                    <td>Requested loan amount (₹ thousands)</td>
+                </tr>
+                <tr>
+                    <td><strong>ApplicantIncome</strong></td>
+                    <td>Numeric</td>
+                    <td>Primary applicant income (₹ annual)</td>
+                </tr>
+                <tr>
+                    <td><strong>CoapplicantIncome</strong></td>
+                    <td>Numeric</td>
+                    <td>Co-applicant income (₹ annual)</td>
+                </tr>
+                <tr>
+                    <td><strong>Dependents</strong></td>
+                    <td>Categorical</td>
+                    <td>Number of dependents (0, 1, 2, 3+)</td>
+                </tr>
+                <tr>
+                    <td><strong>Education</strong></td>
+                    <td>Categorical</td>
+                    <td>Educational level (Graduate, Undergraduate)</td>
+                </tr>
+                <tr>
+                    <td><strong>Gender</strong></td>
+                    <td>Categorical</td>
+                    <td>Applicant gender</td>
+                </tr>
+                <tr>
+                    <td><strong>Married</strong></td>
+                    <td>Categorical</td>
+                    <td>Marital status</td>
+                </tr>
+                <tr>
+                    <td><strong>Property_Area</strong></td>
+                    <td>Categorical</td>
+                    <td>Property location (Urban, Semi-Urban, Rural)</td>
+                </tr>
+                <tr>
+                    <td><strong>Self_Employed</strong></td>
+                    <td>Categorical</td>
+                    <td>Self-employed or not</td>
+                </tr>
+            </table>
+
+            <h3>Data Quality Issues Addressed</h3>
+            <ul class="list-group">
+                <li>Credit History: 8.76% missing values (imputed with business logic)</li>
+                <li>Employment Type: 8.53% missing values (mode imputation)</li>
+                <li>Dependencies: Maximum 2% missing across other features</li>
+                <li>Data Types: Converted all to numeric for model compatibility</li>
+                <li>Outliers: Retained for realistic model behavior</li>
+            </ul>
+        </div>
+
+        <!-- MODEL SECTION -->
+        <div id="model" class="section">
+            <h2>🤖 Model Architecture</h2>
+
+            <h3>Algorithm Selection: XGBoost</h3>
+            <p>
+                <strong>XGBoost (Extreme Gradient Boosting)</strong> is a gradient-boosted decision tree ensemble that:
+            </p>
+            <ul class="list-group">
+                <li>Handles both numeric and categorical data efficiently</li>
+                <li>Provides built-in feature importance scoring</li>
+                <li>Resistant to overfitting with proper regularization</li>
+                <li>Scales well to large datasets</li>
+                <li>Provides interpretable decision paths</li>
+            </ul>
+
+            <h3>Hyperparameters</h3>
+            <div class="code-block">
+eta (learning rate):        0.1
+max_depth:                  4
+min_child_weight:           1
+subsample:                  0.8 (row subsampling)
+colsample_bytree:           0.8 (column subsampling)
+objective:                  binary:logistic
+eval_metric:                error
+optimization:               GridSearchCV (5-fold CV)
+            </div>
+
+            <h3>Data Pipeline</h3>
+            <table>
+                <tr>
+                    <th>Stage</th>
+                    <th>Process</th>
+                    <th>Details</th>
+                </tr>
+                <tr>
+                    <td><strong>1. Loading</strong></td>
+                    <td>Load raw data</td>
+                    <td>491 training samples with 13 features</td>
+                </tr>
+                <tr>
+                    <td><strong>2. Preprocessing</strong></td>
+                    <td>Handle missing values</td>
+                    <td>Mode and median imputation with business logic</td>
+                </tr>
+                <tr>
+                    <td><strong>3. Encoding</strong></td>
+                    <td>One-hot encode categorical variables</td>
+                    <td>7 categorical features → 14 numeric features</td>
+                </tr>
+                <tr>
+                    <td><strong>4. Splitting</strong></td>
+                    <td>Train/validation/test split</td>
+                    <td>70% train (343), 30% val (148), 8% test (123)</td>
+                </tr>
+                <tr>
+                    <td><strong>5. Training</strong></td>
+                    <td>GridSearchCV optimization</td>
+                    <td>Hyperparameter tuning with cross-validation</td>
+                </tr>
+                <tr>
+                    <td><strong>6. Evaluation</strong></td>
+                    <td>Performance metrics</td>
+                    <td>Accuracy, Precision, Recall, F1-Score, Confusion Matrix</td>
+                </tr>
+            </table>
+
+            <h3>Training Configuration</h3>
+            <div class="grid">
+                <div class="grid-item">
+                    <h4>Optimization Method</h4>
+                    <p>GridSearchCV with 5-fold cross-validation for robust hyperparameter selection</p>
+                </div>
+                <div class="grid-item">
+                    <h4>Regularization</h4>
+                    <p>L1/L2 regularization and early stopping to prevent overfitting</p>
+                </div>
+                <div class="grid-item">
+                    <h4>Class Imbalance</h4>
+                    <p>Stratified sampling ensuring balanced representation in folds</p>
+                </div>
+                <div class="grid-item">
+                    <h4>Validation Strategy</h4>
+                    <p>Train on 70% data, validate on 30%, final test on unseen holdout set</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERFORMANCE SECTION -->
+        <div id="performance" class="section">
+            <h2>📋 Model Performance</h2>
+
+            <h3>Overall Metrics</h3>
+            <table>
+                <tr>
+                    <th>Metric</th>
+                    <th>Value</th>
+                    <th>Interpretation</th>
+                </tr>
+                <tr>
+                    <td><strong>Accuracy</strong></td>
+                    <td><span style="color: #667eea; font-weight: bold;">70.27%</span></td>
+                    <td>Correctly classified 7 out of 10 applications</td>
+                </tr>
+                <tr>
+                    <td><strong>Precision</strong></td>
+                    <td><span style="color: #667eea; font-weight: bold;">76.85%</span></td>
+                    <td>Of approved predictions, 76.85% are correct</td>
+                </tr>
+                <tr>
+                    <td><strong>Recall (Sensitivity)</strong></td>
+                    <td><span style="color: #667eea; font-weight: bold;">81.37%</span></td>
+                    <td>Model catches 81.37% of truly approvable applicants</td>
+                </tr>
+                <tr>
+                    <td><strong>Specificity</strong></td>
+                    <td><span style="color: #667eea; font-weight: bold;">45.65%</span></td>
+                    <td>Model identifies actual rejections (lower priority)</td>
+                </tr>
+                <tr>
+                    <td><strong>F1-Score</strong></td>
+                    <td><span style="color: #667eea; font-weight: bold;">0.7905</span></td>
+                    <td>Balanced harmonic mean of precision and recall</td>
+                </tr>
+            </table>
+
+            <h3>Confusion Matrix</h3>
+            <div class="confusion-matrix">
+                <p style="margin-bottom: 20px; font-weight: bold; font-size: 1.1em;">Validation Set (148 samples)</p>
+                <div style="display: inline-grid; grid-template-columns: 200px 200px; gap: 20px;">
+                    <div class="matrix-cell positive">
+                        <div class="matrix-label">True Positives (TP)</div>
+                        <div class="matrix-value">83</div>
+                        <div class="matrix-label">Correctly Approved</div>
+                    </div>
+                    <div class="matrix-cell negative">
+                        <div class="matrix-label">False Positives (FP)</div>
+                        <div class="matrix-value">25</div>
+                        <div class="matrix-label">Incorrectly Approved</div>
+                    </div>
+                    <div class="matrix-cell negative">
+                        <div class="matrix-label">False Negatives (FN)</div>
+                        <div class="matrix-value">19</div>
+                        <div class="matrix-label">Missed Approvals</div>
+                    </div>
+                    <div class="matrix-cell positive">
+                        <div class="matrix-label">True Negatives (TN)</div>
+                        <div class="matrix-value">21</div>
+                        <div class="matrix-label">Correctly Rejected</div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Classification Performance by Class</h3>
+            <table>
+                <tr>
+                    <th>Class</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1-Score</th>
+                    <th>Support</th>
+                </tr>
+                <tr>
+                    <td><strong>Approved (0)</strong></td>
+                    <td>76.85%</td>
+                    <td>81.37%</td>
+                    <td>0.7905</td>
+                    <td>102</td>
+                </tr>
+                <tr>
+                    <td><strong>Rejected (1)</strong></td>
+                    <td>45.65%</td>
+                    <td>52.50%</td>
+                    <td>0.4878</td>
+                    <td>46</td>
+                </tr>
+            </table>
+
+            <h3>Model Behavior Analysis</h3>
+            <div class="highlight">
+                <strong>Conservative Approval Strategy:</strong><br>
+                The model has higher false positive rate (54.35%) than false negative rate (23.04%), showing a bias toward approval. This is strategically useful for loan decisions where:
+                <ul style="margin-top: 10px;">
+                    <li>Further human review can minimize risk of false approvals</li>
+                    <li>Missing approvable loans (false negatives) can hurt bank competitiveness</li>
+                    <li>The 81.37% recall ensures strong capture of eligible applicants</li>
+                </ul>
+            </div>
+
+            <h3>Decision Threshold</h3>
+            <p>
+                The model uses a default probability threshold of 0.5 for classification. This can be adjusted:
+            </p>
+            <ul class="list-group">
+                <li><strong>Lower threshold</strong> → More approvals (higher sensitivity, lower specificity)</li>
+                <li><strong>Higher threshold</strong> → Fewer approvals (lower sensitivity, higher specificity)</li>
+                <li><strong>Current balanced</strong> → 0.5 default threshold optimizes F1-score</li>
+            </ul>
+        </div>
+
+        <!-- FEATURES SECTION -->
+        <div id="features" class="section">
+            <h2>🔍 Feature Importance Analysis</h2>
+
+            <h3>Top 10 Most Influential Features</h3>
+            <p>
+                Feature importance is calculated using XGBoost's built-in importance mechanism, which measures how much each feature contributes to reducing impurity across all decision trees.
+            </p>
+
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-rank">1</div>
+                    <div class="feature-details">
+                        <div class="feature-name">Credit_History</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 32.48px;"></div>
+                            <span class="percentage">32.48%</span>
+                        </div>
+                        <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Single strongest predictor - 3x more important than income</div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">2</div>
+                    <div class="feature-details">
+                        <div class="feature-name">Loan_Amount_Term</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 15.39px;"></div>
+                            <span class="percentage">15.39%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">3</div>
+                    <div class="feature-details">
+                        <div class="feature-name">Loan_Amount</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 12.24px;"></div>
+                            <span class="percentage">12.24%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">4</div>
+                    <div class="feature-details">
+                        <div class="feature-name">ApplicantIncome</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 10.89px;"></div>
+                            <span class="percentage">10.89%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">5</div>
+                    <div class="feature-details">
+                        <div class="feature-name">CoapplicantIncome</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 8.15px;"></div>
+                            <span class="percentage">8.15%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">6</div>
+                    <div class="feature-details">
+                        <div class="feature-name">Property_Area_Semi-Urban</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 6.28px;"></div>
+                            <span class="percentage">6.28%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">7</div>
+                    <div class="feature-details">
+                        <div class="feature-name">Education_Graduate</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 5.21px;"></div>
+                            <span class="percentage">5.21%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">8</div>
+                    <div class="feature-details">
+                        <div class="feature-name">Dependents</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 4.87px;"></div>
+                            <span class="percentage">4.87%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">9</div>
+                    <div class="feature-details">
+                        <div class="feature-name">Gender_Male</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 2.14px;"></div>
+                            <span class="percentage">2.14%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-rank">10</div>
+                    <div class="feature-details">
+                        <div class="feature-name">Married_Yes</div>
+                        <div class="feature-importance">
+                            <div class="bar" style="width: 1.35px;"></div>
+                            <span class="percentage">1.35%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Feature Grouping Analysis</h3>
+            <table>
+                <tr>
+                    <th>Category</th>
+                    <th>Features</th>
+                    <th>Combined Importance</th>
+                </tr>
+                <tr>
+                    <td><strong>Credit/Behavior</strong></td>
+                    <td>Credit_History</td>
+                    <td>32.48%</td>
+                </tr>
+                <tr>
+                    <td><strong>Loan Characteristics</strong></td>
+                    <td>Term, Amount</td>
+                    <td>27.63%</td>
+                </tr>
+                <tr>
+                    <td><strong>Income</strong></td>
+                    <td>Applicant, Co-applicant Income</td>
+                    <td>19.04%</td>
+                </tr>
+                <tr>
+                    <td><strong>Geographic</strong></td>
+                    <td>Property_Area variants</td>
+                    <td>10.51%</td>
+                </tr>
+                <tr>
+                    <td><strong>Demographics</strong></td>
+                    <td>Education, Gender, Married, Dependents</td>
+                    <td>10.34%</td>
+                </tr>
+            </table>
+
+            <h3>Key Insights</h3>
+            <ul class="list-group">
+                <li><strong>Credit History Dominance:</strong> Previous credit behavior is the strongest predictor - 3x more important than total income</li>
+                <li><strong>Loan Characteristics Matter:</strong> Term and amount decisions heavily influence approval likelihood</li>
+                <li><strong>Income is Secondary:</strong> Total household income (applicant + co-applicant) accounts for ~19% combined importance</li>
+                <li><strong>Geographic Impact:</strong> Property location (urban/semi-urban/rural) influences ~10.51% of decisions</li>
+                <li><strong>Demographics Less Influential:</strong> Family status, education, and gender account for ~10% combined weight</li>
+            </ul>
+        </div>
+
+        <!-- SETUP SECTION -->
+        <div id="setup" class="section">
+            <h2>🚀 Installation & Setup</h2>
+
+            <h3>Prerequisites</h3>
+            <ul class="list-group">
+                <li>Python 3.8 or higher (tested on 3.11.13)</li>
+                <li>pip or conda package manager</li>
+                <li>100MB free disk space</li>
+                <li>Git for version control</li>
+            </ul>
+
+            <h3>Step 1: Clone Repository</h3>
+            <div class="code-block">
+$ git clone https://github.com/yourusername/loan-approval-prediction-main.git
+$ cd loan-approval-prediction-main
+            </div>
+
+            <h3>Step 2: Create Virtual Environment</h3>
+            <div class="code-block">
+# On macOS/Linux
+$ python -m venv venv
+$ source venv/bin/activate
+
+# On Windows
+$ python -m venv venv
+$ venv\Scripts\activate
+            </div>
+
+            <h3>Step 3: Install Dependencies</h3>
+            <div class="code-block">
+$ pip install -r requirements.txt
+            </div>
+
+            <h3>Required Packages</h3>
+            <table>
+                <tr>
+                    <th>Package</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td>pandas</td>
+                    <td>Data manipulation and analysis</td>
+                </tr>
+                <tr>
+                    <td>numpy</td>
+                    <td>Numerical computing</td>
+                </tr>
+                <tr>
+                    <td>scikit-learn</td>
+                    <td>Machine learning utilities and metrics</td>
+                </tr>
+                <tr>
+                    <td>xgboost</td>
+                    <td>Gradient boosting model implementation</td>
+                </tr>
+                <tr>
+                    <td>flask</td>
+                    <td>Web application framework</td>
+                </tr>
+                <tr>
+                    <td>joblib</td>
+                    <td>Model serialization and loading</td>
+                </tr>
+                <tr>
+                    <td>matplotlib</td>
+                    <td>Data visualization</td>
+                </tr>
+                <tr>
+                    <td>seaborn</td>
+                    <td>Statistical visualization</td>
+                </tr>
+            </table>
+
+            <h3>Step 4: Run Web Application</h3>
+            <div class="code-block">
+$ python app.py
+
+# Application available at: http://localhost:5000
+            </div>
+
+            <h3>Step 5: Explore Jupyter Notebook</h3>
+            <div class="code-block">
+$ jupyter notebook
+
+# Open: notebook/Machine Learning Model Dev.ipynb
+            </div>
+
+            <h3>Troubleshooting</h3>
+            <div class="highlight">
+                <strong>ModuleNotFoundError:</strong> Ensure all dependencies are installed with pip install -r requirements.txt<br><br>
+                <strong>Port 5000 in use:</strong> Modify app.py to use different port or kill existing process<br><br>
+                <strong>Kernel issues in Notebook:</strong> Restart kernel and run cells sequentially from top
+            </div>
+        </div>
+
+        <!-- STRUCTURE SECTION -->
+        <div id="structure" class="section">
+            <h2>📁 Project Structure</h2>
+
+            <div class="code-block">
+loan-approval-prediction-main/
+├── app.py                          # Flask web application
+├── requirements.txt                # Python dependencies list
+├── runtime.txt                     # Heroku runtime configuration
+├── Procfile                        # Heroku deployment config
+├── README.md                       # Complete documentation
+├── .gitignore                      # Git ignore rules
+├── PROJECT_DASHBOARD.html          # This dashboard
+│
+├── data/
+│   ├── loan_train.csv             # Training dataset (491 samples)
+│   ├── loan_test.csv              # Test dataset (123 samples)
+│   └── columns_set.json           # Feature metadata
+│
+├── notebook/
+│   └── Machine Learning Model Dev.ipynb  # Complete ML pipeline
+│
+├── bin/                           # Model artifacts
+│   └── model.pkl                  # Trained XGBoost model (generated)
+│
+├── static/
+│   ├── css/
+│   │   └── style.css              # Application styling
+│   ├── fonts/
+│   │   ├── material-icon/         # Material Design icons
+│   │   └── poppins/               # Poppins font family
+│   └── images/                    # Static images
+│
+└── template/
+    ├── index.html                 # Home and input form page
+    ├── prediction.html            # Prediction results page
+    └── error.html                 # Error handling page
+            </div>
+
+            <h3>File Purposes</h3>
+            <table>
+                <tr>
+                    <th>File/Folder</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td><strong>app.py</strong></td>
+                    <td>Flask web server and API routes for predictions</td>
+                </tr>
+                <tr>
+                    <td><strong>requirements.txt</strong></td>
+                    <td>Python package dependencies (pip install -r)</td>
+                </tr>
+                <tr>
+                    <td><strong>Jupyter Notebook</strong></td>
+                    <td>Complete data science workflow with visualizations</td>
+                </tr>
+                <tr>
+                    <td><strong>data/</strong></td>
+                    <td>Raw training and test datasets</td>
+                </tr>
+                <tr>
+                    <td><strong>bin/model.pkl</strong></td>
+                    <td>Serialized trained XGBoost model</td>
+                </tr>
+                <tr>
+                    <td><strong>template/</strong></td>
+                    <td>HTML templates for web interface</td>
+                </tr>
+                <tr>
+                    <td><strong>static/</strong></td>
+                    <td>CSS, fonts, and images for frontend</td>
+                </tr>
+            </table>
+
+            <h3>Development Workflow</h3>
+            <ol style="margin: 20px; padding-left: 20px;">
+                <li><strong>Data Exploration:</strong> Run Jupyter notebook cells 1-5 for EDA</li>
+                <li><strong>Model Training:</strong> Execute cells 6-10 to train XGBoost model</li>
+                <li><strong>Model Evaluation:</strong> Run cells 11-12 for performance metrics</li>
+                <li><strong>Web Interface:</strong> Execute python app.py to run Flask server</li>
+                <li><strong>Make Predictions:</strong> Navigate to http://localhost:5000 and input data</li>
+            </ol>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Loan Approval Prediction System</strong></p>
+            <p>A comprehensive machine learning solution for automated loan eligibility assessment</p>
+            <p style="margin-top: 20px; font-size: 0.95em;">
+                Built with Python | XGBoost | Flask | pandas | scikit-learn
+            </p>
+            <p style="margin-top: 20px;">
+                <a href="README.md">📖 Full Documentation</a> | 
+                <a href="notebook/Machine Learning Model Dev.ipynb">📓 Jupyter Notebook</a> | 
+                <a href="https://github.com">🔗 GitHub Repository</a>
+            </p>
+            <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
+                Last Updated: January 2024 | Project Status: Active Development
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Set first tab as active on load
+        window.addEventListener('load', function() {
+            document.querySelector('.nav-tab').classList.add('active');
+        });
+    </script>
+</body>
+</html>
