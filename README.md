@@ -140,8 +140,8 @@ Actual Rejected:    25 (FP)               21 (TN)
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
-cd loan-approval-prediction-main
+git clone https://github.com/xpushkal/loan-prediction.git
+cd loan-prediction
 ```
 
 2. **Create virtual environment** (recommended)
