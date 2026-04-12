@@ -164,10 +164,7 @@ dmypy.json
 .env.local
 .env.*.local
 
-# Dependencies
-node_modules/
-npm-debug.log
-yarn-error.log
+
 
 # OS files
 .DS_Store
